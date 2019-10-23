@@ -41,7 +41,7 @@ print_endline "";;
 (* Simultaneous Definitions for Mutual Recursion *)
 let rec even x =
   if (x = 0) then true else (x > 0) && odd (x - 1)
-  and odd x = if x = 1 then true else x > 1 && even (x - 1);;
+and odd x = if x = 1 then true else x > 1 && even (x - 1);;
 
 print_endline "";;
 pb (odd 3);;

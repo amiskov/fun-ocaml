@@ -53,7 +53,7 @@ let of_int minutes =
   ; minute = if minutes mod 2 = 0 then 0 else 1
   };;
 
-#trace of_int;;
-of_int 3;;
-pb (of_int 3 = { year = 1 ; month = 1 ; day = 1 ; hour = 1 ; minute = 1 });;
+(* #trace of_int;; *)
+(* of_int 3;; *)
+(* pb (of_int 3 = { year = 1 ; month = 1 ; day = 1 ; hour = 1 ; minute = 1 });; *)
 

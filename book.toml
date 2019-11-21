@@ -1,0 +1,6 @@
+[book]
+authors = ["Andrey Miskov"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Introduction to Functional Programming in OCaml"

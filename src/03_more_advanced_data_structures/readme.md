@@ -1,10 +1,10 @@
 # More Advanced Data Structures
 Рассматриваются алгебраические типы данных, которые позволяют лучше структурировать значения:
 
-- Tagged Values
-- Recursive Types
-- Tree-like Values
-- Case Study: a Story Teller
+- [Tagged Values](#tagged-values)
+- [Recursive Types](#recursive-types)
+- [Tree-like Values](#tree-like-values)
+- [Case Study: a Story Teller](#case-study-story-teller)
 - Polymorphic Algebraic DataTypes
 - Advanced Topics
 
@@ -14,7 +14,7 @@
 Но эти три значения не всегда актуальны:
 
 - если статус `false`, то два остальных параметра не имеют смысла;
-- если обновили базу, то контакт не возвращается, только база;
+- если обновили базу, то интересная только обновлённая база, не контакт;
 - если нашли контакт, то база не имеет значения.
 
 Мы можем ввести новый тип, который описывает эти ситуации:
@@ -80,7 +80,7 @@ type int_list =
   | SomeElement of int * int_list
 ```
 
-В ЭВМ списки представлены как связные списки.
+В ЭВМ OCaml-списки представлены как связные списки.
 
 Тип (sum type), который в своем определении ссылается на себя — рекурсивный.
 
@@ -90,7 +90,7 @@ type int_list =
 
 `i :: r` — паттерн для головы и хвоста (скобки не нужны!).
 
-`[some_expre; ... ; some_expr]` — объявление списка.
+`[some_expr; ... ; some_expr]` — объявление списка.
 
 `@` — конкатенация списков: `[1;2;3] @ [4]`.
 
@@ -106,48 +106,23 @@ database   database
 - db from the left is lexicographically less than `contact`
 - db from the right is lexicographically more than `contact`
 
-Type in OCaml:
+В задаче про базу данных контактов можно использовать рекурсивный тип `database`:
 
 ```ocaml
-type database =
-  | NoContact
-  | DataNode of database * contact * database
+{{#include ./code/tree_db_example.ml:10:23}}
 ```
 
-Здесь мы получаем _инвариант_ — в любом случае будет тип `database`, хоть она пустая, хоть мы запросили `contact`.
-
-Example:
-
-```ocaml
-let yoda = {name = "Yoda"; phone_number = (1,1,1,1)};;
-let luke = {name = "Luke"; phone_number = (2,2,2,2)};;
-let leia = {name = "Leia"; phone_number = (3,3,3,3)};;
-
-DataNode(DataNode(NoContact, leia, NoContact),
-         luke,
-         DataNode(NoContact, yoda, NoContact))
-```
+С помощью типа `database` мы получаем _инвариант_ — запрашивая базу мы получим тип `database` в любом случае.
 
 Искать по такой базе — значит совершить обход дерева:
 
 ```ocaml
-let search db name =
-  let rec traverse = function
-    | NoContact -> Error
-    | DataNode (left, contact, right) ->
-      if contact.name = name then
-        FundContact name
-      else if name < contact.name then
-        traverse left
-      else
-        traverse right
-  in traverse db
-;;
+{{#include ./code/tree_db_example.ml:25:35}}
 ```
 
-Это решение для `search` работает быстрее, чем решение с массивом. Потому что в худшем случае (когда контакт не будет найдет) мы обойдём только одну ветку целиком. С массивом придётся обойти всю базу.
+Это решение для `search` работает быстрее, чем решение с массивом. Потому что в худшем случае (когда контакт не будет найден) мы обойдём только одну ветку целиком. С массивом придётся обойти всю базу.
 
-TODO: сделать базу [сбалансированным деревом](https://www.youtube.com/watch?v=WXXetwePSRk), чтобы алгоритм поиска был ещё более оптимальный:
+_TODO:_ сделать базу [сбалансированным деревом](https://www.youtube.com/watch?v=WXXetwePSRk), чтобы алгоритм поиска был ещё более оптимальным:
 
 > As an exercise, try to maintain the extra invariant that the tree is balanced, i.e. that its height is bound by the logarithm of the number of contacts.
 

@@ -84,11 +84,41 @@ let delete db contact =
     in
     (true, db', contact);;
 
+let update db contact =
+  let rec aux idx =
+    if idx >= db.number_of_contacts then
+      insert db contact
+    else if (db.contacts.(idx).name = contact.name
+             && (not (db.contacts.(idx).phone_number = contact.phone_number))) then
+      let cells i =
+        if db.contacts.(i).name = contact.name then
+          {
+            name = contact.name;
+            phone_number = contact.phone_number
+          }
+        else
+          db.contacts.(i) in
+      let arr = (Array.init (Array.length db.contacts) cells) in
+      let db' = {
+        number_of_contacts = db.number_of_contacts;
+        contacts = arr
+      }
+      in
+      (true, db', contact)
+    else if (db.contacts.(idx).name = contact.name
+             && (db.contacts.(idx).phone_number = contact.phone_number)) then
+      (false, db, contact)
+    else
+      aux (idx + 1)
+  in
+  aux 0;;
+
 (* Engine parses and interprets the query. *)
 let engine db { code ; contact } =
   if code = 0 then insert db contact
   else if code = 1 then delete db contact
   else if code = 2 then search db contact
+  else if code = 3 then update db contact
   else (false, db, nobody);;
 
 let sveta = {name = "Sveta"; phone_number = (1,2,3,4) }

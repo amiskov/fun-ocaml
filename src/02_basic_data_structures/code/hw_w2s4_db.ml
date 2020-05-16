@@ -1,3 +1,4 @@
+(* ANCHOR: db_demo_code *)
 (* A phone number is a sequence of four integers. *)
 type phone_number = int * int * int * int;;
 
@@ -16,8 +17,10 @@ type database = {
   contacts : contact array;
 };;
 
-(* [make n] is the database with no contact and at most [n] contacts
-    stored inside. *)
+(* `make N` is the database with no contact
+   and at most `N` contacts stored inside (with `N` nobodies).
+   `N` is not for `number_of_contacts`! It just creates `N` empty cells.
+   `number_of_contacts` will be updated via insert or delete.*)
 let make max_number_of_contacts =
   {
     number_of_contacts = 0;
@@ -121,16 +124,13 @@ let engine db { code ; contact } =
   else if code = 3 then update db contact
   else (false, db, nobody);;
 
+(* ANCHOR_END: db_demo_code *)
+
+(* Initialize DB with 5 empty fields *)
+let db = make 3;;
+
 let sveta = {name = "Sveta"; phone_number = (1,2,3,4) }
 let vasya = {name = "Vasya"; phone_number = (2,3,4,5) };;
-
-(* let kolya = {name = "Kolya"; phone_number = (3,4,5,6) }
-   let stepa = {name = "Stepa"; phone_number = (4,5,6,7) }
-   let vanya = {name = "Vanya"; phone_number = (5,6,7,8) }
-*)
-
-(* Initialize DB with 5 fields *)
-let db = make 3;;
 
 print_string "Insert Sveta\n";;
 let q1 = engine db { code = 0; contact = sveta };;
@@ -144,22 +144,11 @@ let q3 = let (_, db, _) = q2 in engine db { code = 1; contact = sveta };;
 print_string "Find Vasya\n";;
 let q4 = let (_, db, _) = q3 in engine db { code = 2; contact = vasya }
 
-(* Homework *)
-(* let proof_of_bug =
-   let sveta = {name = "Sveta"; phone_number = (1,2,3,4) } in
-   let vasya = {name = "Vasya"; phone_number = (2,3,4,5) } in
-   [|{ code = 0; contact = sveta }; 
+let proof_of_bug =
+  let sveta = {name = "Sveta"; phone_number = (1,2,3,4) } in
+  let vasya = {name = "Vasya"; phone_number = (2,3,4,5) } in
+  [|{ code = 0; contact = sveta }; 
     { code = 0; contact = vasya }; 
     { code = 1; contact = sveta };
     { code = 2; contact = vasya}|]
-*)
 
-
-(*  let delete db contact =
-    "Replace this string with your implementation." ;;
-
-    let update db contact =
-    "Replace this string with your implementation." ;;
-
-    let engine db { code ; contact } =
-    "Replace this string with your implementation." ;; *)
